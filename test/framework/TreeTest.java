@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import xyz.baudelaplace.bmvp.framework.Tree;
+
 @TestInstance(Lifecycle.PER_CLASS)
 class TreeTest {
 

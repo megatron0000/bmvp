@@ -6,8 +6,10 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import framework.binding.Binding;
-import framework.events.Event;
+import xyz.baudelaplace.bmvp.framework.LocalEventDispatcher;
+import xyz.baudelaplace.bmvp.framework.View;
+import xyz.baudelaplace.bmvp.framework.binding.Binding;
+import xyz.baudelaplace.bmvp.framework.events.Event;
 
 class ViewTest {
 

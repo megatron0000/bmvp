@@ -10,8 +10,12 @@ import org.jmock.lib.script.ScriptedAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import framework.binding.Binding;
-import framework.views.ViewAdapter;
+import xyz.baudelaplace.bmvp.framework.BindingOwner;
+import xyz.baudelaplace.bmvp.framework.CDStrategyEnum;
+import xyz.baudelaplace.bmvp.framework.ChangeDetector;
+import xyz.baudelaplace.bmvp.framework.OutBinding;
+import xyz.baudelaplace.bmvp.framework.binding.Binding;
+import xyz.baudelaplace.bmvp.framework.views.ViewAdapter;
 
 class CDStrategyEnumTest {
 

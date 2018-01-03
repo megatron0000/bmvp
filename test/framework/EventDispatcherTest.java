@@ -13,9 +13,12 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import framework.binding.Binding;
-import framework.events.Event;
 import net.jodah.concurrentunit.ConcurrentTestCase;
+import xyz.baudelaplace.bmvp.framework.EventDispatcher;
+import xyz.baudelaplace.bmvp.framework.LocalEventDispatcher;
+import xyz.baudelaplace.bmvp.framework.Presenter;
+import xyz.baudelaplace.bmvp.framework.binding.Binding;
+import xyz.baudelaplace.bmvp.framework.events.Event;
 
 class EventDispatcherTest extends ConcurrentTestCase {
 

@@ -7,7 +7,8 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import framework.binding.Binding;
+import xyz.baudelaplace.bmvp.framework.Presenter;
+import xyz.baudelaplace.bmvp.framework.binding.Binding;
 
 class PresenterTest {
 

@@ -7,10 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import framework.binding.Binding;
-import framework.binding.BindingConsumer;
-import framework.exceptions.BindingNotCloneableException;
-import framework.exceptions.BindingResetAfterRead;
+import xyz.baudelaplace.bmvp.framework.CDStateEnum;
+import xyz.baudelaplace.bmvp.framework.CDStrategy;
+import xyz.baudelaplace.bmvp.framework.ChangeDetector;
+import xyz.baudelaplace.bmvp.framework.OutBinding;
+import xyz.baudelaplace.bmvp.framework.binding.Binding;
+import xyz.baudelaplace.bmvp.framework.binding.BindingConsumer;
+import xyz.baudelaplace.bmvp.framework.exceptions.BindingNotCloneableException;
+import xyz.baudelaplace.bmvp.framework.exceptions.BindingResetAfterRead;
 
 class OutBindingTest {
 

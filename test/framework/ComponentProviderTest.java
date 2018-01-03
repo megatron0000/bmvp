@@ -10,7 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import com.google.inject.Injector;
 
-import framework.binding.Binding;
+import xyz.baudelaplace.bmvp.framework.ComponentProvider;
+import xyz.baudelaplace.bmvp.framework.EventDispatcher;
+import xyz.baudelaplace.bmvp.framework.LocalEventDispatcher;
+import xyz.baudelaplace.bmvp.framework.Presenter;
+import xyz.baudelaplace.bmvp.framework.View;
+import xyz.baudelaplace.bmvp.framework.binding.Binding;
 
 class ComponentProviderTest {
 
