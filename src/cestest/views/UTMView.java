@@ -19,24 +19,35 @@ public class UTMView extends View<UTMBinding> {
 
 	HashMap<Object, PNode> drones = new HashMap<>();
 
+	/**
+	 * Initially, not checking for PNode initialization led to ghost drones (the
+	 * ones created at startup disappeared)
+	 */
 	@Override
 	public void onBindingChanged(UTMBinding newBinding) {
-		if (newBinding == null)
+		if (newBinding == null || !grid.getIsInitialized())
 			return;
 
-		Object drone = newBinding.drone;
-		double x = newBinding.x;
-		double y = newBinding.y;
+		// System.out.print("view begin: " + grid);
+		newBinding.drones.forEach((drone, pos) -> {
 
-		if (!drones.containsKey(drone)) {
-			PNode rect = new PNode();
-			rect.setBounds(x, y, 40, 40);
-			rect.setPaint(Color.RED);
-			drones.put(drone, rect);
-			grid.getCanvas().getLayer().addChild(rect);
-		} else {
-			drones.get(drone).setBounds(x, y, 40, 40);
-		}
+			double x = pos.getX();
+			double y = pos.getY();
+
+			if (!drones.containsKey(drone)) {
+				PNode rect = new PNode();
+				// System.out.println("view x2: " + x);
+				rect.setBounds(x, y, 40, 40);
+				rect.setPaint(Color.RED);
+				drones.put(drone, rect);
+				// System.out.println("view layer : " + grid.getCanvas().getLayer());
+				grid.getCanvas().getLayer().addChild(rect);
+				// System.out.println("view end");
+			} else {
+				drones.get(drone).setBounds(x, y, 40, 40);
+			}
+
+		});
 	}
 
 	@Override
@@ -47,6 +58,15 @@ public class UTMView extends View<UTMBinding> {
 			public void mouseClicked(PInputEvent event) {
 				System.out.println("click");
 				self.push(new DroneCreationRequest() {
+					@Override
+					public double getX() {
+						return event.getPosition().getX();
+					}
+
+					@Override
+					public double getY() {
+						return event.getPosition().getY();
+					}
 				});
 			}
 		});

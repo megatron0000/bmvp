@@ -1,9 +1,10 @@
 package cestest.events;
 
+import java.awt.geom.Point2D;
+
 import framework.events.Event;
 
 public interface DroneLocationChange extends Event {
-	double getX();
-	double getY();
+	Point2D getPosition();
 	Object getDrone();
 }

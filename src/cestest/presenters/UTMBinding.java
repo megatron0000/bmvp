@@ -1,17 +1,16 @@
 package cestest.presenters;
 
+import java.awt.geom.Point2D;
+import java.util.HashMap;
+
 import framework.binding.Binding;
 
 public class UTMBinding implements Binding {
 
-	public Object drone;
-	public double x;
-	public double y;
+	public HashMap<Object, Point2D> drones;
 
-	public UTMBinding(Object drone, double x, double y) {
-		this.drone = drone;
-		this.x = x;
-		this.y = y;
+	public UTMBinding(HashMap<Object, Point2D> drones) {
+		this.drones = drones;
 	}
 
 	@Override

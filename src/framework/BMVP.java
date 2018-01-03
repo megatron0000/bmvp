@@ -1,8 +1,7 @@
 
 package framework;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -12,7 +11,6 @@ import com.google.inject.TypeLiteral;
 
 import framework.annotations.Root;
 import framework.annotations.Strategy;
-import framework.exceptions.EventDispatcherException;
 import framework.views.ViewAdapter;
 
 /**
@@ -50,7 +48,7 @@ public abstract class BMVP extends AbstractModule {
 		bind(ViewAdapter.class).toInstance(adapter);
 	}
 
-	public Future<Void> start() {
+	public CompletableFuture<Void> start() {
 		Injector injector = Guice.createInjector(this);
 		EventDispatcher eventDispatcher = injector.getInstance(EventDispatcher.class);
 		ComponentProvider compProvider = injector.getInstance(ComponentProvider.class);
@@ -65,12 +63,7 @@ public abstract class BMVP extends AbstractModule {
 				(queuedEvent) -> queuedEvent.getEvent().getStrategy().run(
 						queuedEvent, masterPresenter.getSubtree(), eventDispatcher));
 
-		try {
-			return eventDispatcher.start();
-		} catch (InterruptedException | ExecutionException e) {
-			eventDispatcher.stop();
-			throw new EventDispatcherException(e);
-		}
+		return eventDispatcher.start();
 
 	}
 

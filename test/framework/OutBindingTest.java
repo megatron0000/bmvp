@@ -11,7 +11,6 @@ import framework.binding.Binding;
 import framework.binding.BindingConsumer;
 import framework.exceptions.BindingNotCloneableException;
 import framework.exceptions.BindingResetAfterRead;
-import framework.exceptions.ChangedAfterCheckedException;
 
 class OutBindingTest {
 
@@ -107,23 +106,25 @@ class OutBindingTest {
 		} catch (BindingNotCloneableException e) {
 			fail("Should not throw when Binding is cloneable");
 		}
-		assertThrows(BindingNotCloneableException.class, ()-> {
+		assertThrows(BindingNotCloneableException.class, () -> {
 			outbinding.set(new Binding() {
 				@Override
 				public Object clone() throws CloneNotSupportedException {
 					throw new CloneNotSupportedException();
 				}
 			});
+			outbinding.synchronizeChanges();
 			outbinding.get();
 		});
 	}
 
 	@Test
-	void shouldThrowIfSetWhenChanged() {
-		assertThrows(ChangedAfterCheckedException.class, () -> {
-			outbinding.setChecked();
-			outbinding.set(null);
-		});
+	void shouldThrowIfSetWhenChecked() {
+		// No longer throws because Outbinding is now lazy
+		// assertThrows(ChangedAfterCheckedException.class, () -> {
+		// outbinding.setChecked();
+		// outbinding.set(null);
+		// });
 	}
 
 	@Test
@@ -137,6 +138,7 @@ class OutBindingTest {
 	void shouldGoToNEED_CHECKIfChangedOutsidePRE_INITAndCHECK_DISABLED() {
 		outbinding.setWaiting();
 		outbinding.set(emptyBinding);
+		outbinding.synchronizeChanges();
 		assertEquals(CDStateEnum.NEED_CHECK, outbinding.getState());
 	}
 
@@ -156,7 +158,7 @@ class OutBindingTest {
 		restoreBinding();
 		try {
 			outbinding.reset(bindingConsumer, changeDetector);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			fail("Outbinding should not have thrown when reset before read");
 		}
 	}

@@ -1,16 +1,16 @@
 package framework;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import com.google.common.collect.HashBasedTable;
 
 import framework.events.Event;
 import framework.events.EventListener;
+import framework.exceptions.EventDispatcherException;
 import framework.utility.ReflectionUtil;
 
 public class EventDispatcher {
@@ -26,6 +26,8 @@ public class EventDispatcher {
 	};
 
 	private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+	private boolean skipQueue = false;
 
 	EventDispatcher() {
 		// TODO Auto-generated constructor stub
@@ -69,21 +71,29 @@ public class EventDispatcher {
 	 * @param e
 	 */
 	<T extends Event> void push(Presenter<?> agent, T e) {
+
+		QueuedEvent queuedEvent = new QueuedEvent() {
+			@Override
+			public Event getEvent() {
+				return e;
+			}
+
+			@Override
+			public Presenter<?> getPresenter() {
+				return agent;
+			}
+		};
+
 		synchronized (queue) {
-			queue.add(new QueuedEvent() {
+			if (e.isSynchronous()) {
+				skipQueue = true;
+				dispatchAlgorithm.accept(queuedEvent);
+			} else
+				queue.add(queuedEvent);
 
-				@Override
-				public Event getEvent() {
-					return e;
-				}
-
-				@Override
-				public Presenter<?> getPresenter() {
-					return agent;
-				}
-			});
 			queue.notify();
 		}
+
 	}
 
 	<T extends Event> void register(Presenter<?> p, Class<T> eventType, EventListener<T> eventListener) {
@@ -102,18 +112,31 @@ public class EventDispatcher {
 		onStartRunnable = onStart;
 	}
 
-	Future<Void> start() throws InterruptedException, ExecutionException {
-		return executorService.submit(() -> {
+	/**
+	 * On error, internally stops the dispatcher and rejects the CompletableFuture
+	 * 
+	 * @return representation of the underlying running dispatcher.
+	 */
+	CompletableFuture<Void> start() {
+		return CompletableFuture.runAsync(() -> {
 			onStartRunnable.run();
 			while (true) {
-				while (queue.isEmpty())
+				while (queue.isEmpty() && !skipQueue)
 					synchronized (queue) {
-						queue.wait();
+						try {
+							queue.wait();
+						} catch (InterruptedException e) {
+							throw new RuntimeException(e);
+						}
 					}
 				while (!queue.isEmpty())
 					dispatchAlgorithm.accept(queue.poll());
 				onQueueEmptyRunnable.run();
+				skipQueue = false;
 			}
+		}, executorService).exceptionally(exception -> {
+			this.stop();
+			throw new EventDispatcherException(exception);
 		});
 	}
 

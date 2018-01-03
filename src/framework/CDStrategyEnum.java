@@ -13,27 +13,25 @@ public enum CDStrategyEnum implements CDStrategy {
 		public void run(BindingOwner ownerElement, ViewAdapter adapter) {
 
 			ownerElement.getPresenterOutBindings().forEach(binding -> {
+				binding.synchronizeChanges();
 				binding.updateConsumer();
 			});
 
+			// TODO Invoking several methods can be slow. Better if I reunited all update
+			// operations and called all at once at the end of CD
 			adapter.invoke(() -> {
 				OutBinding<? extends Binding> binding = ownerElement.getViewOutBinding();
+				binding.synchronizeChanges();
 
-				// TODO This synchronization is "bugish". It allows agents from outside view
-				// thread to call Outbinding .set() directly, without ViewAdapter.invoke()
-				synchronized (binding) {
-					binding.updateConsumer();
-
-					// TODO Finish should only be invoked after ALL calls to updateConsumer (among
-					// view bindings)
-					binding.onCDPhaseFinish();
-				}
+				binding.updateConsumer();
 			});
 
 			ownerElement.getPresenterOutBindings().forEach(b -> {
 				b.getConsumerDetector().run();
 				b.onCDPhaseFinish();
 			});
+
+			adapter.invoke(() -> ownerElement.getViewOutBinding().onCDPhaseFinish());
 
 		}
 
@@ -46,18 +44,18 @@ public enum CDStrategyEnum implements CDStrategy {
 			ArrayList<OutBinding<? extends Binding>> changedBindings = new ArrayList<>();
 
 			ownerElement.getPresenterOutBindings().forEach(binding -> {
+				binding.synchronizeChanges();
+
 				if (binding.hasImpendingChange())
 					changedBindings.add(binding);
 
 				binding.updateConsumer();
 			});
 
-			// TODO Finish should only be invoked after ALL calls to updateConsumer (of view
-			// bindings)
 			adapter.invoke(() -> {
 				OutBinding<? extends Binding> binding = ownerElement.getViewOutBinding();
+				binding.synchronizeChanges();
 				binding.updateConsumer();
-				binding.onCDPhaseFinish();
 			});
 
 			ownerElement.getPresenterOutBindings().forEach(b -> {
@@ -65,6 +63,8 @@ public enum CDStrategyEnum implements CDStrategy {
 					b.getConsumerDetector().run();
 				b.onCDPhaseFinish();
 			});
+
+			adapter.invoke(() -> ownerElement.getViewOutBinding().onCDPhaseFinish());
 
 		}
 	};

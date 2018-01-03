@@ -29,7 +29,10 @@ public class CesTest extends BMVP {
 				SwingUtilities.invokeLater(task);
 			}
 
-		}).start().get();
+		}).start().exceptionally(exception -> {
+			exception.printStackTrace();
+			return null;
+		});
 	}
 
 }

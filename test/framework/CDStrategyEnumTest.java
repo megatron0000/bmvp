@@ -76,15 +76,25 @@ class CDStrategyEnumTest {
 		context.checking(new Expectations() {
 			{
 
+				oneOf(bindingChild1).synchronizeChanges();
+				inSequence(updateConsumerSequence);
+				
 				oneOf(bindingChild1).updateConsumer();
 				inSequence(updateConsumerSequence);
+				
+				oneOf(bindingChild2).synchronizeChanges();
+				inSequence(updateConsumerSequence);
+				
 				oneOf(bindingChild2).updateConsumer();
 				inSequence(updateConsumerSequence);
+				
 				oneOf(bindingChild1).onCDPhaseFinish();
 				inSequence(updateConsumerSequence);
+				
 				oneOf(bindingChild2).onCDPhaseFinish();
 				inSequence(updateConsumerSequence);
 
+				oneOf(bindingView).synchronizeChanges();
 				oneOf(bindingView).updateConsumer();
 				oneOf(bindingView).onCDPhaseFinish();
 
@@ -108,7 +118,11 @@ class CDStrategyEnumTest {
 		context.checking(new Expectations() {
 			{
 
+				oneOf(bindingChild1).synchronizeChanges();
+				inSequence(updateConsumerSequence);
 				oneOf(bindingChild1).updateConsumer();
+				inSequence(updateConsumerSequence);
+				oneOf(bindingChild2).synchronizeChanges();
 				inSequence(updateConsumerSequence);
 				oneOf(bindingChild2).updateConsumer();
 				inSequence(updateConsumerSequence);
@@ -117,6 +131,7 @@ class CDStrategyEnumTest {
 				oneOf(bindingChild2).onCDPhaseFinish();
 				inSequence(updateConsumerSequence);
 
+				oneOf(bindingView).synchronizeChanges();
 				oneOf(bindingView).updateConsumer();
 				oneOf(bindingView).onCDPhaseFinish();
 

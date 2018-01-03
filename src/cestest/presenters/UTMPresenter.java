@@ -1,5 +1,8 @@
 package cestest.presenters;
 
+import java.awt.geom.Point2D;
+import java.util.HashMap;
+
 import com.google.inject.Inject;
 
 import cestest.events.DroneCreationRequest;
@@ -15,7 +18,11 @@ public class UTMPresenter extends Presenter<UTMBinding> {
 	ViewAdapter adapter;
 
 	private OutBinding<UTMBinding> viewB;
-
+	
+	private HashMap<Object, Point2D> drones = new HashMap<>();
+	
+	private UTMBinding binding = new UTMBinding(drones);
+	
 	@Override
 	public void onBindingChanged(UTMBinding newBinding) {
 		System.out.println("UTMPresenter.onBindingChanged(UTMBinding newBinding)");
@@ -38,10 +45,31 @@ public class UTMPresenter extends Presenter<UTMBinding> {
 		createChild(GCSPresenter.class);
 
 		registerListener(DroneLocationChange.class, (e) -> {
-			viewB.set(new UTMBinding(e.getDrone(), e.getX(), e.getY()));
+			drones.put(e.getDrone(), e.getPosition());
+			viewB.set(binding);
 		});
 
-		registerListener(DroneCreationRequest.class, event -> createChild(GCSPresenter.class));
+		registerListener(DroneCreationRequest.class, event -> {
+			createChild(GCSPresenter.class).set(new GCSBinding(new Point2D() {
+
+				@Override
+				public void setLocation(double x, double y) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public double getY() {
+					return event.getY();
+				}
+
+				@Override
+				public double getX() {
+					return event.getX();
+				}
+			}));
+
+		});
 	}
 
 }

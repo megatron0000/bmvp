@@ -32,6 +32,11 @@ public class GridExample extends PFrame {
     protected Stroke gridStroke = new BasicStroke(1);
     protected Color gridPaint = Color.BLACK;
     protected double gridSpacing = 20;
+    private boolean isInitialized = false;
+    
+    public boolean getIsInitialized() {
+    	return isInitialized;
+    }
 
     public GridExample() {
         this(null);
@@ -114,6 +119,8 @@ public class GridExample extends PFrame {
 
         // getCanvas().getLayer().addChild(n);
         getCanvas().removeInputEventListener(getCanvas().getPanEventHandler());
+        
+        isInitialized=true;
 
         // add a drag event handler that supports snap to grid.
 //        getCanvas().addInputEventListener(new PDragSequenceEventHandler() {

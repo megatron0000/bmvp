@@ -26,6 +26,7 @@ public class MasterPresenter extends Presenter<Binding> {
 		createChild((Class<Presenter<Binding>>) rootPresenter);
 
 		subtree = new Tree<Presenter<?>>(this);
+		
 		registerListener(PresenterCreatedEvent.class, event -> {
 			if (event.getNewPresenter() == this)
 				return;
@@ -35,6 +36,7 @@ public class MasterPresenter extends Presenter<Binding> {
 						"Tried to put a new Presenter on Tree, " + "but parent node did not exist yet");
 			subtree.addChild(event.getParent(), event.getNewPresenter());
 		});
+		
 		registerListener(PresenterScheduledDestroyEvent.class, event -> {
 			subtree.removeSubtree(event.getPresenter());
 			event.getPresenter().internalOnDestroy();

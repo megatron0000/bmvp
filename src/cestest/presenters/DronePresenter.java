@@ -1,5 +1,6 @@
 package cestest.presenters;
 
+import java.awt.geom.Point2D;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,41 +15,57 @@ public class DronePresenter extends Presenter<DroneBinding> {
 
 	@Override
 	public void onBindingChanged(DroneBinding newBinding) {
-		// TODO Auto-generated method stub
-
+		if (newBinding == null)
+			return;
+		
+		x = newBinding.x;
+		y = newBinding.y;
 	}
 
 	@Override
 	public void onInit() {
 		DronePresenter self = this;
+		
 		// TODO Auto-generated method stub
 		new Timer().scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
-				x = x + 20 * (new Random().nextDouble() - 0.5);
-				y = y + 20 * (new Random().nextDouble() - 0.5);
+				x = x + 5 * (new Random().nextDouble() - 0.5);
+				y = y + 5 * (new Random().nextDouble() - 0.5);
 				push(new DroneLocationChange() {
 
 					@Override
-					public double getY() {
-						return y;
+					public Point2D getPosition() {
+						return new Point2D() {
+							@Override
+							public double getX() {
+								return x;
+							}
+							@Override
+							public double getY() {
+								return y;
+							}
+							@Override
+							public void setLocation(double x, double y) {
+							}
+						};
 					}
-
-					@Override
-					public double getX() {
-						// TODO Auto-generated method stub
-						return x;
-					}
-
+					
 					@Override
 					public Object getDrone() {
 						return self;
 					}
+					
+					@Override
+					public boolean isSynchronous() {
+						return true;
+					}
+					
 				});
 
 			}
-		}, 4000, 1000 / 10);
+		}, 0, 1000 / 60);
 	}
 
 	@Override
